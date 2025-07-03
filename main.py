@@ -15,3 +15,29 @@ def get_b2_value():
 
 if __name__ == "__main__":
     get_b2_value()
+    
+import os
+import requests
+
+def send_wecom_message(text):
+    # 从 GitHub Secrets 获取 Webhook URL
+    webhook_url = os.environ.get("WECOM_WEBHOOK_URL")  # 需在 Secrets 中配置
+
+    headers = {"Content-Type": "application/json"}
+    data = {
+        "msgtype": "text",
+        "text": {
+            "content": text,
+            # 可选：指定@的成员（通过 userid）
+            "mentioned_list": ["user1", "user2"]
+        }
+    }
+
+    response = requests.post(webhook_url, json=data, headers=headers)
+    return response.json()
+
+if __name__ == "__main__":
+    # 示例：推送 Google Sheets 处理结果
+    message = "任务执行成功！表格已更新。"
+    result = send_wecom_message(message)
+    print("企微机器人响应:", result)
